@@ -1,11 +1,8 @@
 #!/bin/sh -f
 #
-# automate building of a freebsd release
-# it gives you the option to update svn mirror, local source, build world,
+# automate making of a freebsd release
+# it prompts you to update svn depot, source tree, build world,
 # make release, and make ISO disc images.
-# it saves all your choices in .make.release and reloads them at the next run
-# it figures out the release name from $srcDir/sys/conf/newvers.sh
-#
 
 # $Log: make.release,v $
 # Revision 1.24  2018/06/23 20:25:14  ping
@@ -24,8 +21,6 @@
 # checkin before changing over to new release(7) that came with
 # FreeBSD release 10.x
 #
-#
-
 SVNSYNC=svnlitesync
 SVNADMIN=svnliteadmin
 SVN=svnlite
@@ -244,7 +239,8 @@ cd $svnRoot && \
 $SVNADMIN create base && \
 $SVNADMIN create doc && \
 $SVNADMIN create ports && \
-echo \'#!/bin/sh\' > base/hooks/pre-revprop-change && \
+printf \#\!/bin/sh\\\nexit\ 0 > base/hooks/pre-revprop-change && \
+chmod 755 base/hooks/pre-revprop-change && \
 cp base/hooks/pre-revprop-change doc/hooks/pre-revprop-change && \
 cp doc/hooks/pre-revprop-change ports/hooks/pre-revprop-change && \
 $SVNSYNC init file://${svnRoot}/base svn://svn.freebsd.org/base && \
