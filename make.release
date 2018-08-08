@@ -29,6 +29,7 @@ RM=/bin/rm
 MKDIR=/bin/mkdir
 CHFLAGS=/bin/chflags
 
+oldmask=`umask`
 umask=022
 
 rcfile=$HOME/.`basename $0`
@@ -36,7 +37,7 @@ branch="RELENG_4"
 releaseDir="/local/release10"
 svnRoot="/local/fbsdsvn"
 buildMaxJob=32
-releaseMaxJob=1
+releaseMaxJob=16
 
 read_rcfile() {
 	test -f $rcfile && \
@@ -98,9 +99,12 @@ prompt() {
 }
 
 die() {
+	umask $oldmask
 	echo "$1"
 	exit $2
 }
+
+trap die EXIT
 
 #
 # Returns full path of $1
